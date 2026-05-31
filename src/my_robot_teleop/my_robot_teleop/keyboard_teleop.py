@@ -1,6 +1,7 @@
 import sys
 import select
 import termios
+import time
 import tty
 
 import rclpy
@@ -48,6 +49,17 @@ class KeyboardTeleop(Node):
         self.angular_z = 0.0
         self.publish_cmd()
 
+    def ramp_stop(self, steps=10, delay=0.03):
+        start_linear = self.linear_x
+        start_angular = self.angular_z
+
+        for step in range(steps - 1, -1, -1):
+            scale = step / steps
+            self.linear_x = start_linear * scale
+            self.angular_z = start_angular * scale
+            self.publish_cmd()
+            time.sleep(delay)
+
     def handle_key(self, key):
         if key == 'w':
             self.linear_x = min(self.linear_x + self.linear_step, self.max_linear)
@@ -58,9 +70,9 @@ class KeyboardTeleop(Node):
         elif key == 'd':
             self.angular_z = max(self.angular_z - self.angular_step, -self.max_angular)
         elif key == 'x':
-            self.stop()
+            self.ramp_stop()
         elif key == 'q':
-            self.stop()
+            self.ramp_stop()
             return False
 
         self.publish_cmd()
