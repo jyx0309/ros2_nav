@@ -44,7 +44,7 @@
     </link>
 
     <link name="laser_link">
-      <pose>0.20 0 0.25 0 0 0</pose>
+      <pose>0.20 0 0.22 0 0 0</pose>
 
       <inertial>
         <mass>0.2</mass>
@@ -112,7 +112,7 @@
     </link>
 
     <link name="left_wheel_link">
-      <pose>0 0.23 0.075 1.57079632679 0 0</pose>
+      <pose>0 0.23 0.08 1.57079632679 0 0</pose>
       <inertial>
         <mass>0.8</mass>
         <inertia>
@@ -155,7 +155,7 @@
     </link>
 
     <link name="right_wheel_link">
-      <pose>0 -0.23 0.075 1.57079632679 0 0</pose>
+      <pose>0 -0.23 0.08 1.57079632679 0 0</pose>
       <inertial>
         <mass>0.8</mass>
         <inertia>
@@ -247,7 +247,7 @@
     <joint name="laser_joint" type="fixed">
       <parent>base_link</parent>
       <child>laser_link</child>
-      <pose relative_to="base_link">0.20 0 0.13 0 0 0</pose>
+      <pose relative_to="base_link">0.20 0 0.10 0 0 0</pose>
     </joint>
 
     <joint name="caster_joint" type="fixed">
@@ -260,7 +260,7 @@
       <parent>base_link</parent>
       <child>left_wheel_link</child>
       <axis>
-        <xyz>0 0 1</xyz>
+        <xyz>0 0 -1</xyz>
         <limit>
           <lower>-1e16</lower>
           <upper>1e16</upper>
@@ -272,7 +272,7 @@
       <parent>base_link</parent>
       <child>right_wheel_link</child>
       <axis>
-        <xyz>0 0 1</xyz>
+        <xyz>0 0 -1</xyz>
         <limit>
           <lower>-1e16</lower>
           <upper>1e16</upper>
@@ -292,8 +292,8 @@
 
       <odom_publish_frequency>50</odom_publish_frequency>
       <max_velocity>1.0</max_velocity>
-      <max_acceleration>0.8</max_acceleration>
-      <max_jerk>2.0</max_jerk>
+      <max_acceleration>0.5</max_acceleration>
+      <max_jerk>1.0</max_jerk>
 
       <topic>/cmd_vel</topic>
       <odom_topic>/odom</odom_topic>
