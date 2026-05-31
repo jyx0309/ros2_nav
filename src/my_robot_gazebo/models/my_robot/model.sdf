@@ -314,11 +314,14 @@
     <joint name="left_wheel_joint" type="revolute">
       <parent>base_link</parent>
       <child>left_wheel_link</child>
+      <pose relative_to="base_link">0 0.23 -0.04 -1.57079632679 0 0</pose>
       <axis>
         <xyz>0 0 1</xyz>
         <limit>
           <lower>-1e16</lower>
           <upper>1e16</upper>
+          <effort>20</effort>
+          <velocity>20</velocity>
         </limit>
       </axis>
     </joint>
@@ -326,11 +329,14 @@
     <joint name="right_wheel_joint" type="revolute">
       <parent>base_link</parent>
       <child>right_wheel_link</child>
+      <pose relative_to="base_link">0 -0.23 -0.04 -1.57079632679 0 0</pose>
       <axis>
         <xyz>0 0 1</xyz>
         <limit>
           <lower>-1e16</lower>
           <upper>1e16</upper>
+          <effort>20</effort>
+          <velocity>20</velocity>
         </limit>
       </axis>
     </joint>
@@ -347,8 +353,7 @@
 
       <odom_publish_frequency>50</odom_publish_frequency>
       <max_velocity>1.0</max_velocity>
-      <max_acceleration>0.5</max_acceleration>
-      <max_jerk>1.0</max_jerk>
+      <max_linear_acceleration>0.2</max_linear_acceleration>
 
       <topic>/cmd_vel</topic>
       <odom_topic>/odom</odom_topic>
