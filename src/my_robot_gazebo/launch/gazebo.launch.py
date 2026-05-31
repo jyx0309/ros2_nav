@@ -39,6 +39,13 @@ def generate_launch_description():
         'my_robot.urdf.xacro'
     )
 
+    sdf_path = os.path.join(
+        gazebo_pkg_share,
+        'models',
+        'my_robot',
+        'model.sdf'
+    )
+
     # =====================
     # Robot description
     # =====================
@@ -105,10 +112,10 @@ def generate_launch_description():
                 executable='create',
                 arguments=[
                     '-name', 'my_robot',
-                    '-topic', 'robot_description',
+                    '-file', sdf_path,
                     '-x', '0',
                     '-y', '0',
-                    '-z', '0.02'
+                    '-z', '0'
                 ],
                 output='screen'
             )
