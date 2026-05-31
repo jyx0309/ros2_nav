@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'keyboard_teleop = my_robot_teleop.keyboard_teleop:main',
+            'four_wheel_teleop = my_robot_teleop.four_wheel_teleop:main',
         ],
     },
 )

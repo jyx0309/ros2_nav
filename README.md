@@ -18,6 +18,12 @@ The project includes two Gazebo robot variants for comparison:
   ros2 launch my_robot_gazebo gazebo_four_wheel.launch.py
   ```
 
+  Use the car-like keyboard controller for this variant:
+
+  ```bash
+  ros2 run my_robot_teleop four_wheel_teleop
+  ```
+
 Both variants publish the same ROS-facing topics and frames:
 
 - `/cmd_vel`
@@ -28,4 +34,5 @@ Both variants publish the same ROS-facing topics and frames:
 
 Use the two-wheel caster model as the stable Nav2 / SLAM baseline. Use the
 four-wheel skid-steer model to study how lateral wheel slip and Gazebo contact
-friction affect odometry and SLAM.
+friction affect odometry and SLAM. The four-wheel teleop node avoids in-place
+rotation commands by converting speed and steering input into arc motion.
