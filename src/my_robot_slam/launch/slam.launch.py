@@ -20,14 +20,17 @@ def generate_launch_description():
         executable='async_slam_toolbox_node',
         name='slam_toolbox',
         output='screen',
-        parameters=[slam_params_file]
+        parameters=[slam_params_file],
+        respawn=True,
+        respawn_delay=2.0
     )
 
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
         name='rviz2',
-        output='screen'
+        output='screen',
+        parameters=[{'use_sim_time': True}]
     )
 
     lifecycle_manager = Node(

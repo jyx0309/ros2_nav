@@ -171,6 +171,9 @@
       <wheel_radius>${wheel_radius}</wheel_radius>
 
       <odom_publish_frequency>50</odom_publish_frequency>
+      <max_velocity>1.0</max_velocity>
+      <max_acceleration>0.8</max_acceleration>
+      <max_jerk>2.0</max_jerk>
 
       <topic>/cmd_vel</topic>
       <odom_topic>/odom</odom_topic>
@@ -179,14 +182,36 @@
 
     </plugin>
   </gazebo>
+
+  <!-- Keep wheel contact predictable in simulation. Low side friction helps a
+       skid-steer/four-wheel diff robot turn without dragging odometry away. -->
+  <gazebo reference="left_front_wheel_link">
+    <mu1>1.0</mu1>
+    <mu2>0.2</mu2>
+  </gazebo>
+
+  <gazebo reference="left_rear_wheel_link">
+    <mu1>1.0</mu1>
+    <mu2>0.2</mu2>
+  </gazebo>
+
+  <gazebo reference="right_front_wheel_link">
+    <mu1>1.0</mu1>
+    <mu2>0.2</mu2>
+  </gazebo>
+
+  <gazebo reference="right_rear_wheel_link">
+    <mu1>1.0</mu1>
+    <mu2>0.2</mu2>
+  </gazebo>
   
   <!-- ===================== -->
   <!-- Gazebo lidar sensor -->
   <!-- ===================== -->
 
-  <gazebo reference="laser_link">
+  <gazebo reference="base_link">
     <sensor name="laser_sensor" type="gpu_lidar">
-      <pose>0 0 0 0 0 0</pose>
+      <pose>0.20 0 0.13 0 0 0</pose>
       <topic>/scan</topic>
       <update_rate>10</update_rate>
       <gz_frame_id>laser_link</gz_frame_id>

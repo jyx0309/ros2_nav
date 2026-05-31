@@ -3,7 +3,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction
+from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command
 
@@ -18,6 +18,14 @@ def generate_launch_description():
     gazebo_pkg_share = get_package_share_directory('my_robot_gazebo')
     description_pkg_share = get_package_share_directory('my_robot_description')
     ros_gz_sim_share = get_package_share_directory('ros_gz_sim')
+
+    # Keep Gazebo resource lookup local to this project first. This reduces
+    # noisy online Fuel lookups when the network is unavailable.
+    gz_resource_path = os.pathsep.join([
+        gazebo_pkg_share,
+        description_pkg_share,
+        os.environ.get('GZ_SIM_RESOURCE_PATH', '')
+    ])
 
     world_path = os.path.join(
         gazebo_pkg_share,
@@ -58,7 +66,7 @@ def generate_launch_description():
             )
         ),
         launch_arguments={
-            'gz_args': f'-r {world_path}'
+            'gz_args': f'-r -v 3 {world_path}'
         }.items()
     )
 
@@ -71,7 +79,9 @@ def generate_launch_description():
         executable='robot_state_publisher',
         name='robot_state_publisher',
         output='screen',
-        parameters=[robot_description_param]
+        parameters=[robot_description_param],
+        respawn=True,
+        respawn_delay=2.0
     )
 
     joint_state_publisher = Node(
@@ -79,7 +89,9 @@ def generate_launch_description():
         executable='joint_state_publisher',
         name='joint_state_publisher',
         output='screen',
-        parameters=[{'use_sim_time': True}]
+        parameters=[{'use_sim_time': True}],
+        respawn=True,
+        respawn_delay=2.0
     )
     # =====================
     # Spawn robot into Gazebo
@@ -107,67 +119,31 @@ def generate_launch_description():
     # Bridges
     # =====================
 
-    cmd_vel_bridge = Node(
+    bridges = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        name='cmd_vel_bridge',
+        name='gz_ros_bridge',
         arguments=[
-            '/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist'
-        ],
-        output='screen'
-    )
-
-    odom_bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        name='odom_bridge',
-        arguments=[
-            '/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry'
-        ],
-        output='screen'
-    )
-
-    clock_bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        name='clock_bridge',
-        arguments=[
-            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'
-        ],
-        output='screen'
-    )
-
-    scan_bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        name='scan_bridge',
-        arguments=[
-            '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan'
-        ],
-        output='screen'
-    )
-
-    tf_bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        name='tf_bridge',
-        arguments=[
-             '/model/my_robot/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V'
+            '/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist',
+            '/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry',
+            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+            '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan',
+            '/model/my_robot/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V'
         ],
         remappings=[
-             ('/model/my_robot/tf', '/tf')
+            ('/model/my_robot/tf', '/tf')
         ],
+        parameters=[{'use_sim_time': True}],
+        respawn=True,
+        respawn_delay=2.0,
         output='screen'
     )
 
     return LaunchDescription([
+        SetEnvironmentVariable('GZ_SIM_RESOURCE_PATH', gz_resource_path),
         gz_sim,
         robot_state_publisher,
         joint_state_publisher,
         spawn_robot,
-        cmd_vel_bridge,
-        odom_bridge,
-        clock_bridge,
-        scan_bridge,
-        tf_bridge
+        bridges
     ])
